@@ -6,18 +6,12 @@
                 <label>{{getLabel(name)}}:</label> {{value}}<br>
               </span>
                 <i class="fas fa-pencil-alt" v-on:click="edit($event, user)"></i>
-                <DialogContainer :visible="visible">
-                    <Dialog></Dialog>
-                </DialogContainer>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
-    import Dialog from "./Dialog";
-    import DialogContainer from "./DialogContainer";
-
     export default {
         name: 'List',
         props: {
@@ -25,21 +19,13 @@
             users: Array,
             keyword: String
         },
-        data: () => {
-            return {
-                isEdited: null
-            }
-        },
-        components: {
-            Dialog,
-            DialogContainer
-        },
         methods: {
             getLabel: function (key) {
-                return key /*this.$dictionary[this.keyword][key]*/
+                // const data = this.$dictionary[this.keyword][key];
+                return key
             },
-            edit: function(event, item) {
-                console.log(event, item)
+            edit: function (event, item) {
+                this.$emit('edit-user', {isEdited: true, currentUser: item});
             }
         }
     }
