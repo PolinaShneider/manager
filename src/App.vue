@@ -2,7 +2,8 @@
     <div id="app">
         <img alt="Vue logo" src="./assets/logo.png">
         <Layout>
-            <List v-on:edit-user="logger" slot="content" :users="users" :keyword="'users'"></List>
+            <SearchInput v-on:search-result="displaySearch" slot="content" :data="users"></SearchInput>
+            <List v-on:edit-user="logger" slot="content" :loading="isLoading" :users="searchResult" :keyword="'users'"></List>
             <DialogContainer slot="content" :visible="isEdited">
                 <Dialog v-on:update-user="updateUser" :user="currentUser"></Dialog>
             </DialogContainer>
@@ -15,6 +16,8 @@
     import List from "./components/List";
     import Dialog from "./components/Dialog";
     import DialogContainer from "./components/DialogContainer";
+    import SearchInput from "./components/SearchInput";
+    import {getUsers} from "./main";
 
     export default {
         name: 'App',
@@ -22,7 +25,8 @@
             Layout,
             List,
             DialogContainer,
-            Dialog
+            Dialog,
+            SearchInput
         },
         methods: {
             logger: function (val) {
@@ -35,35 +39,28 @@
             },
             updateUser: function () {
                 this.users.push({name: 'Rabia', surName: 'Khamuda', login: 'rabi'});
+            },
+            displaySearch: function (val) {
+                console.log(val)
+                this.searchResult = val;
             }
         },
         data: () => {
             return {
                 currentUser: null,
                 isEdited: false,
-                users: [
-                    {
-                        name: "Anya",
-                        surName: "Vasilkova",
-                        login: "query"
-                    },
-                    {
-                        name: "Vasya",
-                        surName: "Sopelkin",
-                        login: "soplo"
-                    },
-                    {
-                        name: "Grisha",
-                        surName: "Dobrykh",
-                        login: "dobro"
-                    },
-                    {
-                        name: "Vuetify",
-                        surName: "Framework",
-                        login: "vuety"
-                    }
-                ]
+                users: [],
+                searchResult: [],
+                isLoading: true
             }
+        },
+        mounted() {
+            getUsers().then(result => {
+                return result
+            }).then(user => {
+                this.isLoading = false;
+                this.users = user;
+            })
         }
     }
 </script>
