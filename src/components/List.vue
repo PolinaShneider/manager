@@ -1,21 +1,21 @@
 <template>
-    <div class="list-wrapper">
-        <div v-if="!loading" class="list-wrapper-content">
-<!--            <div>{{users.length ? '' : 'Nothing found'}}</div>-->
-            <ul class="list">
-                <li class="list__item" v-for="(user, i) in users" :key="i">
-              <div v-for="(value, name, index) in user" :key="index">
-                <div><b>{{getLabel(name)}}</b></div>
-                  <div>{{value}}</div>
-              </div>
-                    <i class="fas fa-pencil-alt" v-on:click="edit($event, user)"></i>
-                </li>
-            </ul>
-        </div>
-        <div v-else>
-            <span id="loading"></span>
-        </div>
+  <div class="list-wrapper">
+    <div v-if="!loading" class="list-wrapper-content">
+      <div class="no-data" v-if="users.length === 0">Nothing found</div>
+      <ul class="list" v-else>
+        <li class="list__item" v-for="(user, i) in users" :key="i">
+          <div v-for="(value, name, index) in user" :key="index">
+            <div><b>{{getLabel(name)}}</b></div>
+            <div>{{value}}</div>
+          </div>
+          <i class="fas fa-pencil-alt" v-on:click="edit($event, user)"></i>
+        </li>
+      </ul>
     </div>
+    <div class="loader-container" v-else>
+      <span id="loading"></span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -29,8 +29,7 @@
         },
         methods: {
             getLabel: function (key) {
-                // const data = this.$dictionary[this.keyword][key];
-                return key
+                return this.$dictionary[this.keyword][key]
             },
             edit: function (event, item) {
                 this.$emit('edit-user', {isEdited: true, currentUser: item});
@@ -41,72 +40,85 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    * {
-        text-align: initial;
-    }
+  * {
+    text-align: initial;
+  }
 
-    .list {
-        border-radius: 4px;
-        border: 1px solid sandybrown;
-        padding: 8px;
-        margin: 10px;
-        flex-grow: 1;
-    }
+  .list {
+    margin-top: 20px;
+    border-radius: 4px;
+    flex-grow: 1;
+    height: 325px;
+    overflow: scroll;
+    background: #FFFFFF;
+  }
 
-    .list-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .no-data, .loader-container {
+    height: 325px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .list-wrapper-content {
-        width: 100%;
-    }
+  .list-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .list__item {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px;
-        border: 1px solid sandybrown;
-    }
+  .list-wrapper-content {
+    width: 100%;
+  }
 
-    .list__item:not(:first-of-type) {
-        border-top: 0;
-    }
+  .list__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border: 1px solid rgb(128, 128, 128);
+  }
 
-    .list__item span {
-        margin-right: 20px;
-        width: calc(33% - 20px);
-    }
+  .list__item:hover {
+    background: #eeeeee;
+    cursor: pointer;
+  }
 
-    .list__item i {
-        cursor: pointer;
-    }
+  .list__item:not(:first-of-type) {
+    border-top: 0;
+  }
 
-    .list__item label {
-        font-weight: bold;
-    }
+  .list__item div {
+    margin-right: 20px;
+    width: calc(25% - 20px);
+  }
 
-    #loading {
-        display: inline-block;
-        width: 50px;
-        height: 50px;
-        border: 3px solid sandybrown;
-        border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 1s ease-in-out infinite;
-        -webkit-animation: spin 1s ease-in-out infinite;
-    }
+  .list__item i {
+    cursor: pointer;
+  }
 
-    @keyframes spin {
-        to {
-            -webkit-transform: rotate(360deg);
-        }
-    }
+  .list__item label {
+    font-weight: bold;
+  }
 
-    @-webkit-keyframes spin {
-        to {
-            -webkit-transform: rotate(360deg);
-        }
+  #loading {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 3px solid sandybrown;
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    -webkit-animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
     }
+  }
+
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
 </style>

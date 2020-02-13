@@ -1,14 +1,15 @@
 <template>
-    <div id="app">
-        <img alt="Vue logo" src="./assets/logo.png">
-        <Layout>
-            <SearchInput v-on:search-result="displaySearch" slot="content" :data="users"></SearchInput>
-            <List v-on:edit-user="logger" slot="content" :loading="isLoading" :users="searchResult" :keyword="'users'"></List>
-            <DialogContainer slot="content" :visible="isEdited">
-                <Dialog v-on:update-user="updateUser" :user="currentUser"></Dialog>
-            </DialogContainer>
-        </Layout>
-    </div>
+  <div id="app">
+    <img alt="Vue logo" src="./assets/logo.png">
+    <Layout>
+      <SearchInput v-on:search-result="displaySearch" slot="content" :data="users"></SearchInput>
+      <List v-on:edit-user="editUser" slot="content" :loading="isLoading" :users="searchResult"
+            :keyword="'users'"></List>
+      <DialogContainer slot="content" :visible="isEdited">
+        <Dialog v-on:update-user="updateUser" :user="currentUser"></Dialog>
+      </DialogContainer>
+    </Layout>
+  </div>
 </template>
 
 <script>
@@ -17,7 +18,6 @@
     import Dialog from "./components/Dialog";
     import DialogContainer from "./components/DialogContainer";
     import SearchInput from "./components/SearchInput";
-    import {getUsers} from "./main";
 
     export default {
         name: 'App',
@@ -29,7 +29,7 @@
             SearchInput
         },
         methods: {
-            logger: function (val) {
+            editUser: function (val) {
                 if (!val) {
                     return;
                 }
@@ -37,12 +37,28 @@
                 this.currentUser = user;
                 this.isEdited = edited;
             },
-            updateUser: function () {
-                this.users.push({name: 'Rabia', surName: 'Khamuda', login: 'rabi'});
+            updateUser: function ({user}) {
+                const db = this.$firebase.firestore();
+                db.collection('users').doc(user.id).update({
+                    ...user
+                });
+                this.currentUser = null;
+                this.isEdited = false;
+                this.fetchUsers();
             },
             displaySearch: function (val) {
-                console.log(val)
                 this.searchResult = val;
+            },
+            fetchUsers: function () {
+                const db = this.$firebase.firestore();
+                db.collection('users')
+                    .get()
+                    .then(({docs}) => {
+                        this.users = Array.from(docs).map(doc => {
+                            return {...doc.data(), id: doc.id}
+                        });
+                        this.isLoading = false;
+                    });
             }
         },
         data: () => {
@@ -55,23 +71,18 @@
             }
         },
         mounted() {
-            getUsers().then(result => {
-                return result
-            }).then(user => {
-                this.isLoading = false;
-                this.users = user;
-            })
+            this.fetchUsers()
         }
     }
 </script>
 
 <style>
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
-    }
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
 </style>
