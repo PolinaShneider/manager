@@ -9,6 +9,7 @@
         >
       </div>
     </div>
+    <div v-if="errors.length" class="alert alert-danger">{{errors[0]}}</div>
     <button type="button" class="btn btn-outline-primary" v-on:click="updateUser">Submit</button>
   </form>
 </template>
@@ -18,28 +19,63 @@
         name: 'Dialog',
         props: {
             msg: String,
-            user: Object
+            user: Object,
+            isNew: Boolean,
+            logins: Array
         },
         data: function () {
             return {
-                editedUser: {...this.user}
+                editedUser: {...this.user},
+                errors: []
             }
         },
         methods: {
             getLabel: function (key) {
                 return this.$dictionary['users'][key]
             },
+            checkForm: function () {
+                if (!this.editedUser.name) {
+                    this.errors.push('User name cannot be empty');
+                }
+
+                if (!this.editedUser.surName) {
+                    this.errors.push('User surname cannot be empty');
+                }
+
+                const login = this.editedUser.login.length;
+                if (login < 4 || login > 5) {
+                    this.errors.push('User login must be between 4 and 5 symbols');
+                }
+
+                if (this.isNew && this.logins.find(elem => elem === this.editedUser.login.trim())) {
+                    this.errors.push(`User login '${this.editedUser.login}' already exists`);
+                }
+            },
             updateUser: function () {
+                this.errors = [];
+                this.checkForm();
+                if (this.errors.length) {
+                    return;
+                }
                 this.$emit('update-user', {user: {...this.editedUser}})
             },
             updateValue: function (event, name) {
                 this.editedUser[name] = event.target.value;
             },
             getEditableFields: function (user) {
-                return user && {
-                    name: user.name,
-                    surName: user.surName
+                let fields = {};
+
+                if (!user) {
+                    return fields;
                 }
+
+                fields = {...fields, name: user.name, surName: user.surName};
+
+                if (this.isNew) {
+                    return {...fields, login: user.login}
+                }
+
+                return fields;
             }
         },
         watch: {

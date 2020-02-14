@@ -4,7 +4,7 @@
       <div class="no-data" v-if="users.length === 0">Nothing found</div>
       <ul class="list" v-else>
         <li class="list__item" v-for="(user, i) in users" :key="i">
-          <div v-for="(value, name, index) in user" :key="index">
+          <div v-for="(value, name, index) in getValues(user)" :key="index">
             <div><b>{{getLabel(name)}}</b></div>
             <div>{{value}}</div>
           </div>
@@ -30,6 +30,13 @@
         methods: {
             getLabel: function (key) {
                 return this.$dictionary[this.keyword][key]
+            },
+            getValues: function(user) {
+                return {
+                    name: user.name,
+                    surName: user.surName,
+                    login: user.login
+                }
             },
             edit: function (event, item) {
                 this.$emit('edit-user', {isEdited: true, currentUser: item});
