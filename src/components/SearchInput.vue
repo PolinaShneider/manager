@@ -3,7 +3,7 @@
     <label for="search">Users database search...</label>
     <div>{{result.length ? '' : ''}}</div>
     <input id="search" type="text" placeholder="Search me" v-bind:value="searchValue"
-           v-on:input="searchValue = $event.target.value" autocomplete="false">
+           v-on:input="searchValue = $event.target.value" autocomplete="off">
   </div>
 </template>
 
