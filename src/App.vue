@@ -1,36 +1,52 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
     <Layout>
-      <SearchInput v-on:search-result="displaySearch" slot="content" :data="users"></SearchInput>
-      <button class="btn btn-success mt-3" slot="content" v-on:click="addUser">Add user</button>
-      <List v-on:edit-user="editUser" slot="content" :loading="isLoading" :users="searchResult"
-            :keyword="'users'"></List>
-      <DialogContainer slot="content" :visible="isEdited">
+      <img alt="Vue logo" slot="top" src="./assets/logo.png">
+      <SearchInput
+          v-on:search-result="displaySearch"
+          slot="top"
+          :data="users"
+      ></SearchInput>
+      <button
+          class="btn btn-success mt-3"
+          slot="top"
+          v-on:click="addUser"
+      >
+        Add user
+      </button>
+      <ListWrapper
+          v-on:edit-user="editUser"
+          slot="middle"
+          :loading="isLoading"
+          :users="searchResult"
+          :keyword="keyword"
+      ></ListWrapper>
+      <DialogContainer slot="middle" :visible="isEdited">
         <Dialog
-            v-on:update-user="updateUser"
+            v-on:update-record="updateRecord"
             v-on:add-user="addUser"
             :user="currentUser"
+            :keyword="keyword"
             :is-new="isNew"
             :logins="users.map(el => el.login)"
         ></Dialog>
-      </DialogContainer>x
+      </DialogContainer>
     </Layout>
   </div>
 </template>
 
 <script>
-    import Layout from "./components/Layout";
-    import List from "./components/List";
     import Dialog from "./components/Dialog";
     import DialogContainer from "./components/DialogContainer";
+    import Layout from "./components/Layout";
+    import ListWrapper from "./components/ListWrapper";
     import SearchInput from "./components/SearchInput";
 
     export default {
         name: 'App',
         components: {
             Layout,
-            List,
+            ListWrapper,
             DialogContainer,
             Dialog,
             SearchInput
@@ -49,21 +65,22 @@
                 if (!val) {
                     return;
                 }
-                const {currentUser: user, isEdited: edited} = val;
+                const {
+                    currentUser: user
+                } = val;
                 this.currentUser = user;
-                this.isEdited = edited;
+                this.isEdited = true;
                 this.isNew = false;
             },
-            updateUser: function ({user}) {
-                const db = this.$firebase.firestore();
+            updateRecord: function ({user}) {
                 const toAdd = !user.id;
 
                 if (toAdd) {
-                    db.collection('users').add({
+                    this.$db.collection('users').add({
                         ...user
                     })
                 } else {
-                    db.collection('users').doc(user.id).update({
+                    this.$db.collection('users').doc(user.id).update({
                         ...user
                     });
                 }
@@ -75,8 +92,7 @@
                 this.searchResult = val;
             },
             fetchUsers: function () {
-                const db = this.$firebase.firestore();
-                db.collection('users')
+                this.$db.collection('users')
                     .get()
                     .then(({docs}) => {
                         this.users = Array.from(docs).map(doc => {
@@ -96,7 +112,8 @@
                 users: [],
                 searchResult: [],
                 isLoading: true,
-                isNew: false
+                isNew: false,
+                keyword: 'users'
             }
         },
         mounted() {

@@ -15,18 +15,23 @@ firebase.initializeApp({
     measurementId: "G-8FJER5J63N"
 });
 
-Vue.prototype.$firebase = firebase;
+Vue.prototype.$db = firebase.firestore();
+
+Vue.prototype.$dictionary = {
+    'users': {
+        name: 'User name',
+        surName: 'User surname',
+        login: 'User login',
+        id: 'Identifier'
+    }
+};
+
+Vue.prototype.$getLabel = function (category, key) {
+    return this.$dictionary[category] ? this.$dictionary[category][key] : key;
+};
+
 Vue.config.productionTip = false;
 
 new Vue({
     render: h => h(App),
 }).$mount('#app');
-
-Vue.prototype.$dictionary = {
-    'users': {
-        name: 'Имя',
-        surName: 'Фамилия',
-        login: 'Логин',
-        id: 'Идентификатор'
-    }
-};

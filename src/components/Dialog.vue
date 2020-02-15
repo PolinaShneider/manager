@@ -2,15 +2,17 @@
   <form class="dialog">
     <div>
       <div v-for="(value, name, index) in getEditableFields(editedUser)" :key="index" class="form-group">
-        <label for="`${name}`">{{getLabel(name)}}:</label>
-        <input
-            type="text" id="`${name}`" class="form-control"
-            v-bind:value="value" v-on:input="updateValue($event, name)"
-        >
+        <label>
+          {{$getLabel(keyword, name)}}
+          <input
+               type="text" :id="name" class="form-control"
+               v-bind:value="value" v-on:input="updateValue($event, name)"
+           >
+        </label>
       </div>
     </div>
     <div v-if="errors.length" class="alert alert-danger">{{errors[0]}}</div>
-    <button type="button" class="btn btn-outline-primary" v-on:click="updateUser">Submit</button>
+    <button type="button" class="btn btn-outline-primary" v-on:click="updateRecord">Submit</button>
   </form>
 </template>
 
@@ -18,8 +20,8 @@
     export default {
         name: 'Dialog',
         props: {
-            msg: String,
             user: Object,
+            keyword: String,
             isNew: Boolean,
             logins: Array
         },
@@ -30,9 +32,6 @@
             }
         },
         methods: {
-            getLabel: function (key) {
-                return this.$dictionary['users'][key]
-            },
             checkForm: function () {
                 if (!this.editedUser.name) {
                     this.errors.push('User name cannot be empty');
@@ -51,17 +50,24 @@
                     this.errors.push(`User login '${this.editedUser.login}' already exists`);
                 }
             },
-            updateUser: function () {
+            updateRecord: function () {
                 this.errors = [];
                 this.checkForm();
                 if (this.errors.length) {
                     return;
                 }
-                this.$emit('update-user', {user: {...this.editedUser}})
+                this.$emit('update-record', {user: {...this.editedUser}})
             },
+            /**
+             * Helper used for user fields updating on input change
+             */
             updateValue: function (event, name) {
                 this.editedUser[name] = event.target.value;
             },
+            /**
+             * On user creation we need to fill name, surName and login
+             * On editing login should be omitted
+             */
             getEditableFields: function (user) {
                 let fields = {};
 
@@ -79,7 +85,10 @@
             }
         },
         watch: {
-            user: function (newVal, oldVal) { // watch it
+            /**
+             * Watch user prop. When it's ready, initialize data with it and use for editing
+             */
+            user: function (newVal, oldVal) {
                 if (newVal && newVal !== oldVal) {
                     this.editedUser = {...newVal};
                 }

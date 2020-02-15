@@ -1,35 +1,19 @@
 <template>
   <div class="container">
-    <slot name="content"></slot>
+    <slot name="top"></slot>
+    <Delimiter></Delimiter>
+    <slot name="middle"></slot>
   </div>
 </template>
 
 <script>
+    import Delimiter from "./Delimiter";
+
     export default {
         name: 'Layout',
-        props: {
-            msg: String
+        components: {
+            Delimiter
         }
     }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  h3 {
-    margin: 40px 0 0;
-  }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  a {
-    color: #42b983;
-  }
-</style>
