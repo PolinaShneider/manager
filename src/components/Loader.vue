@@ -25,7 +25,7 @@
     display: inline-block;
     width: 50px;
     height: 50px;
-    border: 3px solid sandybrown;
+    border: 3px solid #40B883;
     border-radius: 50%;
     border-top-color: #fff;
     animation: spin 1s ease-in-out infinite;
