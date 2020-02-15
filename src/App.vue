@@ -25,6 +25,7 @@
         <Dialog
             v-on:update-record="updateRecord"
             v-on:add-user="addUser"
+            v-on:close-dialog="closeDialog"
             :user="currentUser"
             :keyword="keyword"
             :is-new="isNew"
@@ -71,6 +72,10 @@
                 this.currentUser = user;
                 this.isEdited = true;
                 this.isNew = false;
+            },
+            closeDialog: function () {
+                this.currentUser = null;
+                this.isEdited = false;
             },
             updateRecord: function ({user}) {
                 const toAdd = !user.id;

@@ -1,5 +1,6 @@
 <template>
   <form class="dialog">
+    <i class="fa fa-times dialog-close" v-on:click="closeDialog"></i>
     <div>
       <div v-for="(value, name, index) in getEditableFields(editedUser)" :key="index" class="form-group">
         <label>
@@ -32,6 +33,9 @@
             }
         },
         methods: {
+            closeDialog: function () {
+                this.$emit('close-dialog')
+            },
             checkForm: function () {
                 if (!this.editedUser.name) {
                     this.errors.push('User name cannot be empty');
@@ -110,6 +114,19 @@
     padding: 30px 16px 16px 16px;
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .dialog-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    opacity: 0.5;
+  }
+
+  .dialog-close:hover {
+    cursor: pointer;
+    opacity: 1;
   }
 
   input:focus, input:active {
