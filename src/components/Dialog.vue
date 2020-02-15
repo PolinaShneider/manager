@@ -6,7 +6,7 @@
         <label>
           {{$getLabel(keyword, name)}}
           <input
-               type="text" :id="name" class="form-control"
+               type="text" :id="name" class="form-control" autocomplete="off"
                v-bind:value="value" v-on:input="updateValue($event, name)"
            >
         </label>
@@ -34,6 +34,7 @@
         },
         methods: {
             closeDialog: function () {
+                this.errors = [];
                 this.$emit('close-dialog')
             },
             checkForm: function () {
@@ -132,5 +133,10 @@
   input:focus, input:active {
     box-shadow: none;
     border-color: rgba(0, 0, 0, 0.25);
+  }
+
+  .btn:focus, .btn:active {
+    box-shadow: none !important;
+    border-color: #007bff;
   }
 </style>

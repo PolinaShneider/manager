@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import notifier from 'codex-notifier';
 import './styles/main.css'
 import firebase from 'firebase'
 import 'firebase/firestore'
@@ -29,6 +30,8 @@ Vue.prototype.$dictionary = {
 Vue.prototype.$getLabel = function (category, key) {
     return this.$dictionary[category] ? this.$dictionary[category][key] : key;
 };
+
+Vue.prototype.$notifier = notifier;
 
 Vue.config.productionTip = false;
 

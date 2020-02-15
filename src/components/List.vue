@@ -13,7 +13,8 @@
           {{value}}
         </td>
         <td>
-          <i class="fas fa-pencil-alt" v-on:click="edit($event, user)"></i>
+          <i class="fas fa-pencil-alt" v-on:click="editItem($event, user)"></i>
+          <i class="fas fa-times" v-on:click="deleteItem($event, user)"></i>
         </td>
       </tr>
       </tbody>
@@ -37,9 +38,22 @@
                     login: user.login
                 }
             },
-            edit: function (event, item) {
+            editItem: function (event, item) {
                 this.$parent.$emit('edit-user', {
                     currentUser: item
+                });
+            },
+            deleteItem: function (event, item) {
+                this.$notifier.show({
+                    message: `Delete user ${item.name}?`,
+                    type: 'confirm',
+                    okText: 'Yes, go ahead',
+                    cancelText: 'Oh, wait',
+                    okHandler: () => {
+                        this.$parent.$emit('delete-user', {
+                            currentUser: item
+                        });
+                    }
                 });
             }
         }
@@ -61,6 +75,6 @@
   }
 
   .table td i {
-    margin-left: 40px;
+    margin: 0 15px 0 10px;
   }
 </style>

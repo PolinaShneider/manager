@@ -16,6 +16,7 @@
       </button>
       <ListWrapper
           v-on:edit-user="editUser"
+          v-on:delete-user="deleteUser"
           slot="middle"
           :loading="isLoading"
           :users="searchResult"
@@ -62,6 +63,29 @@
                 this.isNew = true;
                 this.isEdited = true;
             },
+            deleteUser: function (val) {
+                if (!val) {
+                    return;
+                }
+
+                const {
+                    currentUser: user
+                } = val;
+
+                try {
+                    this.$db.collection('users').doc(user.id).delete();
+                    this.$notifier.show({
+                        message: `User ${user.name} was successfully deleted`,
+                        style: 'success'
+                    });
+                    this.fetchUsers();
+                } catch (e) {
+                    this.$notifier.show({
+                        message: `Couldn't delete user ${user.name}`,
+                        style: 'error'
+                    })
+                }
+            },
             editUser: function (val) {
                 if (!val) {
                     return;
@@ -79,16 +103,38 @@
             },
             updateRecord: function ({user}) {
                 const toAdd = !user.id;
+                let message;
 
-                if (toAdd) {
-                    this.$db.collection('users').add({
-                        ...user
-                    })
-                } else {
-                    this.$db.collection('users').doc(user.id).update({
-                        ...user
+                try {
+                    if (toAdd) {
+                        this.$db.collection('users').add({
+                            ...user
+                        })
+                    } else {
+                        this.$db.collection('users').doc(user.id).update({
+                            ...user
+                        });
+                    }
+
+                    message = toAdd ?
+                        `User ${user.name} was successfully added` :
+                        `User ${user.name} was successfully updated`;
+
+                    this.$notifier.show({
+                        message,
+                        style: 'success'
+                    });
+                } catch (e) {
+                    message = toAdd ?
+                        `Couldn't add user ${user.name}` :
+                        `Couldn't update user ${user.name}`;
+
+                    this.$notifier.show({
+                        message,
+                        style: 'success'
                     });
                 }
+
                 this.currentUser = null;
                 this.isEdited = false;
                 this.fetchUsers();

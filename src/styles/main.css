@@ -4,3 +4,12 @@
 .body {
     position: relative;
 }
+
+.cdx-notify__cross {
+    top: 2px;
+    right: 10px;
+}
+
+.cdx-notify__button {
+    outline: none !important;
+}
