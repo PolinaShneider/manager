@@ -108,7 +108,8 @@
                 try {
                     if (toAdd) {
                         this.$db.collection('users').add({
-                            ...user
+                            ...user,
+                            date: Date.now()
                         })
                     } else {
                         this.$db.collection('users').doc(user.id).update({
@@ -144,6 +145,7 @@
             },
             fetchUsers: function () {
                 this.$db.collection('users')
+                    .orderBy('date', 'desc')
                     .get()
                     .then(({docs}) => {
                         this.users = Array.from(docs).map(doc => {

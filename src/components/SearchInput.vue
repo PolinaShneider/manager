@@ -1,7 +1,6 @@
 <template>
   <div>
-    <label for="search">Users database search...</label>
-    <div>{{result.length ? '' : ''}}</div>
+    <label for="search">Search users by name, surname or login 🥑</label><br>
     <input id="search" type="text" placeholder="Search me" v-bind:value="searchValue"
            v-on:input="searchValue = $event.target.value" autocomplete="off">
   </div>
@@ -21,19 +20,25 @@
         computed: {
             result: function () {
                 const data = [...this.data];
-                const result = [];
+                const accum = [];
                 data.forEach(elem => {
                     const {login, name, surName} = elem;
                     const prepared = [
                         login, name, surName
                     ].map(elem => elem.trim().toLowerCase());
                     if (prepared.some(elem => elem.includes(this.searchValue))) {
-                        result.push(elem)
+                        accum.push(elem)
                     }
                 });
-
-                this.$emit('search-result', result);
-                return result;
+                
+                return accum;
+            }
+        },
+        watch: {
+            result: function (newVal, oldVal) {
+                if (newVal && newVal !== oldVal) {
+                    this.$emit('search-result', this.result);
+                }
             }
         }
 
