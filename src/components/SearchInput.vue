@@ -26,6 +26,9 @@
                     const prepared = [
                         login, name, surName
                     ].map(elem => elem.trim().toLowerCase());
+                    /**
+                     * Search by name, surname and login case insensitive
+                     */
                     const searchValue = this.searchValue.toLowerCase();
 
                     if (prepared.some(elem => elem.includes(searchValue))) {
@@ -43,7 +46,6 @@
                 }
             }
         }
-
     }
 </script>
 
