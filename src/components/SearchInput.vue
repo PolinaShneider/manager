@@ -26,11 +26,13 @@
                     const prepared = [
                         login, name, surName
                     ].map(elem => elem.trim().toLowerCase());
-                    if (prepared.some(elem => elem.includes(this.searchValue))) {
+                    const searchValue = this.searchValue.toLowerCase();
+
+                    if (prepared.some(elem => elem.includes(searchValue))) {
                         accum.push(elem)
                     }
                 });
-                
+
                 return accum;
             }
         },
