@@ -5,7 +5,7 @@ node_js:
 install:
   - npm install
 script:
-  - npm test:unit --silent
+  - npm test --silent
 cache:
   directories:
     - node_modules
